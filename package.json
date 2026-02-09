@@ -1,0 +1,32 @@
+{
+  "name": "zen",
+  "version": "1.0.0",
+  "description": "Product photo generation using Gen AI",
+  "homepage": "https://github.com/proof3/Zen#readme",
+  "bugs": {
+    "url": "https://github.com/proof3/Zen/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proof3/Zen.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@google/genai": "^1.33.0",
+    "@langchain/core": "^1.1.1",
+    "@langchain/google-genai": "^2.0.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "langchain": "^1.1.2",
+    "node-fetch": "^3.3.2",
+    "sharp": "^0.34.5",
+    "socket.io": "^4.8.1",
+    "zod": "^4.2.1"
+  }
+}

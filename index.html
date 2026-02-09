@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Node.js Chat</title>
+    <style>
+        body { margin: 0; padding-bottom: 3rem; font-family: sans-serif; }
+        #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+        #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+        #input:focus { outline: none; }
+        #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages > li { padding: 0.5rem 1rem; }
+        #messages > li:nth-child(odd) { background: #efefef; }
+    </style>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+        <input id="input" autocomplete="off" />
+        <input type="file" id="imageInput" accept="image/*" />
+        <button>Send</button>
+    </form>
+
+    <!-- Include the Socket.IO client library -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Connect to the server
+        var socket = io(); 
+
+        var form = document.getElementById('form');
+        var input = document.getElementById('input');
+        var imageInput = document.getElementById('imageInput');
+        var messages = document.getElementById('messages');
+
+        // Send message to server when form is submitted
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = input.value.trim();
+            const file = imageInput.files[0];
+            if (text || file) {
+                const message = { text: text };
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        message.image = event.target.result; // base64 data
+                        message.mimeType = file.type;
+                        socket.emit('chat message', message);
+                        input.value = '';
+                        imageInput.value = '';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    socket.emit('chat message', message);
+                    input.value = '';
+                }
+            }
+        });
+
+        // Receive message from server and append to list
+        socket.on('chat message', function(msg) {
+            var item = document.createElement('li');
+            if (typeof msg === 'string') {
+                item.textContent = msg;
+            } else {
+                if (msg.text) {
+                    item.textContent = msg.text;
+                }
+                if (msg.image) {
+                    var img = document.createElement('img');
+                    img.src = msg.image;
+                    img.style.maxWidth = '200px';
+                    img.style.maxHeight = '200px';
+                    item.appendChild(img);
+                }
+            }
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+</html>
